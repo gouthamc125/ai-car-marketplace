@@ -3,13 +3,12 @@ generator client {
 }
 
 datasource db {
-  provider  = "postgresql"
+  provider  = "mongodb"
   url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
 }
 
 model User {
-  id            String             @id @default(uuid())
+  id            String             @id @default(uuid()) @map("_id")
   clerkUserId   String             @unique // clerk user id
   email         String             @unique
   name          String?
@@ -28,11 +27,11 @@ enum UserRole {
 }
 
 model Car {
-  id                String             @id @default(uuid())
+  id                String             @id @default(uuid()) @map("_id")
   make              String
   model             String
   year              Int
-  price             Decimal            @db.Decimal(10, 2)
+  price             Float            
   mileage           Int
   color             String
   fuelType          String
@@ -65,7 +64,7 @@ enum CarStatus {
 
 // Single dealership configuration, if you have multiple dealerships, you can remove default values.
 model DealershipInfo {
-  id           String        @id @default(uuid())
+  id           String        @id @default(uuid()) @map("_id")
   name         String        @default("Vehiql Motors")
   address      String        @default("69 Car Street, Autoville, CA 69420") 
   phone        String        @default("+1 (555) 123-4567")
@@ -77,7 +76,7 @@ model DealershipInfo {
 
 // Working hours configuration
 model WorkingHour {
-  id             String       @id @default(uuid())
+  id             String       @id @default(uuid()) @map("_id")
   dealershipId   String
   dealership     DealershipInfo   @relation(fields: [dealershipId], references: [id], onDelete: Cascade)
   dayOfWeek      DayOfWeek
@@ -104,7 +103,7 @@ enum DayOfWeek {
 }
 
 model UserSavedCar {
-  id        String   @id @default(uuid())
+  id        String   @id @default(uuid()) @map("_id")
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   carId     String
@@ -117,7 +116,7 @@ model UserSavedCar {
 }
 
 model TestDriveBooking {
-  id            String        @id @default(uuid())
+  id            String        @id @default(uuid()) @map("_id")
   carId         String
   car           Car           @relation(fields: [carId], references: [id])
   userId        String
